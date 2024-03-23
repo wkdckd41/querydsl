@@ -113,4 +113,30 @@ public class QuerydslBasicTest {
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
     }
+
+    @Test
+    void resultFetch() {
+//        List<Member> fetch = queryFactory // 리스트 조회
+//                .selectFrom(member)
+//                .fetch();
+//
+//        Member fetchOne = queryFactory // 결과가 정확히 1건
+//                .selectFrom(member)
+//                .fetchOne();
+//
+//        Member fetchFirst = queryFactory // limit(1).fetchOne()
+//                .selectFrom(member)
+//                .fetchFirst();
+
+//        QueryResults<Member> results = queryFactory // 페이징 처리
+//                .selectFrom(member)
+//                .fetchResults();
+//
+//        results.getTotal();
+//        List<Member> content = results.getResults();
+
+        long total = queryFactory // count 쿼리로 변경
+                .selectFrom(member)
+                .fetchCount();
+    }
 }
