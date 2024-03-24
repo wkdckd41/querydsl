@@ -3,6 +3,7 @@ package study.querydsl;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -375,7 +376,7 @@ public class QuerydslBasicTest {
         List<Member> result = queryFactory
                 .selectFrom(member)
                 .where(member.age.eq(
-                        JPAExpressions
+                        JPAExpressions // 서브쿼리
                                 .select(memberSub.age.max())
                                 .from(memberSub)
                 ))
@@ -466,11 +467,39 @@ public class QuerydslBasicTest {
     @Test
     void complexCase() {
         List<String> result = queryFactory
-                .select(new CaseBuilder()
+                .select(new CaseBuilder() // 복잡한 case 문
                         .when(member.age.between(0, 20)).then("0~20살")
                         .when(member.age.between(21, 30)).then("21~30살")
                         .otherwise("기타"))
                 .from(member)
+                .fetch();
+
+        for (String s : result) {
+            System.out.println("s = " + s);
+        }
+    }
+
+    // 상수
+    @Test
+    void constant() {
+        List<Tuple> result = queryFactory
+                .select(member.username, Expressions.constant("A")) // 상수를 조회
+                .from(member)
+                .fetch();
+
+        for (Tuple tuple : result) {
+            System.out.println("tuple = " + tuple);
+        }
+    }
+
+    // 문자 더하기
+    @Test
+    void concat() {
+        // {username}_{age}
+        List<String> result = queryFactory
+                .select(member.username.concat("_").concat(member.age.stringValue())) // 문자 더하기
+                .from(member)
+                .where(member.username.eq("member1"))
                 .fetch();
 
         for (String s : result) {
